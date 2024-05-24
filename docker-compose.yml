@@ -1,0 +1,19 @@
+services:
+  my_project:
+    image: my_project
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: /bin/bash
+    ipc: host
+    tty: true
+    stdin_open: true
+    container_name: "${USER}_my_project"
+
+# 初めて使う時 docker compose up -d --build
+# 普段使う時 docker compose up -d
+# 終わる時 docker compose down

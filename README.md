@@ -1,7 +1,3 @@
-# Dockerを使って環境を作る手順です
-
-1. docker build ....
-2. 
-
-- 箇条
-    - 箇条 
+# Dockerfile + Poetry　による開発環境テンプレート
+`poetry init`
+`poetry add pandas`

@@ -1,29 +1,24 @@
-# 基本的なDockerfileです
-# これを使えばとりあえず動く
-# 初めて使うとき
-# docker build -t dockertest .
-# 普段使うとき
-# docker run --mount type=bind,src=$PWD,dst=$PWD --workdir $PWD -it --ipc host --rm -p 8888:8888 -p 5910:5900 --name `whoami`_dockertest dockertest /bin/bash
-# nohup jupyter lab --port 8888 --ip=0.0.0.0 --allow-root >> jupyter.log &
-# cat jupyter.log
-
-# Python 3.10イメージをベースに使用
-FROM python:3.10
-
-# 作業ディレクトリを/rootに設定
-WORKDIR /root
+# Python 3.9イメージをベースに使用
+FROM python:3.9
+WORKDIR /app
 
 # 必要なパッケージのインストール
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    git \
+    curl \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-# JupyterLabのインストール
-RUN pip install --no-cache-dir jupyterlab
+RUN git config --global --add safe.directory /app
 
-# JupyterLabを起動するためのポート8888を開放
-EXPOSE 8888
+RUN pip install poetry \
+    && poetry config virtualenvs.create false
 
-# JupyterLab起動用のコマンド
-CMD ["jupyter", "lab", "--port=8888", "--ip=0.0.0.0", "--allow-root", "--ServerApp.token=''"]
+# pyproject.tomlとpoetry.lockをコピーして依存関係をインストール
+# COPY ./pyproject.toml ./poetry.lock* ./
+# RUN poetry install --no-root
+
+# requirements.txtをコピーし、依存関係をインストール
+COPY ./requirements.txt* ./
+RUN poetry init --no-interaction && poetry add $(cat requirements.txt)
