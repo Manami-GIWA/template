@@ -16,9 +16,5 @@ RUN pip install poetry \
     && poetry config virtualenvs.create false
 
 # pyproject.tomlとpoetry.lockをコピーして依存関係をインストール
-# COPY ./pyproject.toml ./poetry.lock* ./
-# RUN poetry install --no-root
-
-# requirements.txtをコピーし、依存関係をインストール
-COPY ./requirements.txt* ./
-RUN poetry init --no-interaction && poetry add $(cat requirements.txt)
+COPY ./pyproject.toml ./poetry.lock* ./
+RUN poetry install --no-root
